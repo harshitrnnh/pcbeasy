@@ -19,26 +19,19 @@ PFont font;
 TuioObject tobjTempq;
 TuioObject tobj;
 
-
 void setup()
 {
-frameRate(1);
+  frameRate(1);
   size(800, 600);
   noStroke();
   fill(0);
 
   hint(ENABLE_NATIVE_FONTS);
   font = createFont("Arial", 18);
-  
 
   myServer = new Server(this, port);
 
   tuioClient  = new TuioProcessing(this);
- 
- // myClient = new Client(this, "127.0.0.1", 6543);
-  
- 
-  //noLoop();
 }
 
 void draw()
@@ -47,64 +40,54 @@ void draw()
   noFill();
   rect(100, 100, 600, 400);
   textFont(font, 18*scale_factor);
-  
+
   stroke(255);
   fill(0, 200);
-  
+
   Vector tuioObjectList =  tuioClient.getTuioObjects();
- // myServer.write(" "+tuioObjectList.size());
+  // myServer.write(" "+tuioObjectList.size());
   if (tuioObjectList.size() ==0) {
-    println ("add something!");
+    myServer.write("0 end\n");
   }
-  
+
   if (tuioObjectList.size() >0) {
-   
-  //  print("tuioObjectList.size()");
-    
-   
-     
-    for (int x = 0; x<tuioObjectList.size(); x++ ){
-     //if (x==0){
-       
-     //}
+
+    for (int x = 0; x<tuioObjectList.size(); x++ ) {
+
+      tobjTempq = (TuioObject)tuioObjectList.elementAt(x);
+      float xx =  tobjTempq.getScreenX(width);    
+      float yy =  tobjTempq.getScreenY(height);
       
-       tobjTempq = (TuioObject)tuioObjectList.elementAt(x);
-       int xx = (int) tobjTempq.getScreenX(width);
-       
-     int yy = (int) tobjTempq.getScreenY(height);
-     
-     String xcoord = nf(xx, 3);
-     String ycoord = nf(yy, 3);
-    
-    String number = nf (tuioObjectList.size(),2);
-       
-       float angle = tobjTempq.getAngleDegrees();
+      float angle = tobjTempq.getAngleDegrees();
+      String angledeg = nf (angle, 3, 2);
       
-       String angledeg = nf (angle,3,2);
-       
       float rad = radians(angle);
       
-      float finxx = (xx) + 5*sin(rad);
-      float finyy = (yy)-5*cos(rad);
-      //println("penfinx- "+finxpen+"penfiny - "+finypen);
+      float finxx = xx+5*sin(rad);
+      float finyy = yy-5*cos(rad);
+            
+      String xcoord = nf(finxx, 3,2);
+      String ycoord = nf(finyy, 3,2);
+
+      String number = nf (tuioObjectList.size(), 2);
+            
+      float rad = radians(angle);
       
-      String writetelnet = number + " " + tobjTempq.getSymbolID()+ " "+ xcoord + " " + ycoord + " " + angle;
+      String writetelnet = number + " " + tobjTempq.getSymbolID()+ " "+ xcoord + " " + ycoord + " " + angledeg;
       print (writetelnet);
-       
+
       myServer.write(writetelnet);
-       // print("   "+tobjTempq.getSymbolID()+"  "+xx+"  "+yy+ "   "+angle);
-       //  myServer.write(""+tobjTempq.getSymbolID()+" "+xx+" "+yy+ " "+angle);
-        
-       // if (x== (tuioObjectList.size()-1)){
-         // myServer.write("\n");
-       // }
-          
-   //  myClient.write(" ("+tuioObjectList.size()+")"+"   "+tobjTempq.getSymbolID()+"  "+xx+"  "+yy+ "   \n"+angle);
-      
+      // print("   "+tobjTempq.getSymbolID()+"  "+xx+"  "+yy+ "   "+angle);
+      //  myServer.write(""+tobjTempq.getSymbolID()+" "+xx+" "+yy+ " "+angle);
+
+      // if (x== (tuioObjectList.size()-1)){
+      // myServer.write("\n");
+      // }
+
+      //  myClient.write(" ("+tuioObjectList.size()+")"+"   "+tobjTempq.getSymbolID()+"  "+xx+"  "+yy+ "   \n"+angle);
     }
-     myServer.write("end\n");
-     print("\n");
-      
-     
+    myServer.write(" end\n");
+    print("\n");
   }
-  }
+}
+
