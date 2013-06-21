@@ -71,7 +71,7 @@ void draw()
 
       String number = nf (tuioObjectList.size(), 2);
             
-      float rad = radians(angle);
+      //float rad = radians(angle);
       
       String writetelnet = number + " " + tobjTempq.getSymbolID()+ " "+ xcoord + " " + ycoord + " " + angledeg;
       print (writetelnet);
